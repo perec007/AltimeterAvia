@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSMotionUsageDescription</key>
+	<string>Приложению нужен доступ к барометру для отображения высоты и вертикальной скорости.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Опционально: для отображения скорости и высоты по GPS.</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string></string>
+		<key>UIImageName</key>
+		<string></string>
+	</dict>
+</dict>
+</plist>
