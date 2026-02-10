@@ -16,25 +16,48 @@ struct ContentView: View {
         ZStack {
             Color.black.ignoresSafeArea()
             
-            ScrollView {
-                VStack(spacing: 24) {
-                    if let msg = barometer.errorMessage {
-                        Text(msg)
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                            .padding(.horizontal)
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 24) {
+                        if let msg = barometer.errorMessage {
+                            Text(msg)
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                                .padding(.horizontal)
+                        }
+                        
+                        AltitudeDisplayView(
+                            altitudeM: barometer.altitudeDisplayM,
+                            qnhHpa: barometer.qnhHpa
+                        )
+                        
+                        VSIGaugeView(verticalSpeedMs: barometer.verticalSpeedMs)
                     }
-                    
-                    AltimeterGaugeView(
-                    altitudeM: barometer.altitudeDisplayM,
-                    qnhHpa: barometer.qnhHpa
-                )
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 20)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
-                VSIGaugeView(verticalSpeedMs: barometer.verticalSpeedMs)
+                if location.isGPSUnavailable {
+                    Text(L10n.loc("gps.unavailable"))
+                        .font(.system(size: 18))
+                        .foregroundColor(.white.opacity(0.6))
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white.opacity(0.08))
+                        .cornerRadius(16)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                } else {
+                    GPSInfoView(location: location)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                }
                 
                 HStack(spacing: 16) {
                     Button(action: { barometer.setZeroAltitude() }) {
-                        Label("Нулевая высота", systemImage: "scope")
+                        Label(L10n.loc("zero_altitude"), systemImage: "scope")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
@@ -45,7 +68,7 @@ struct ContentView: View {
                     .buttonStyle(.plain)
                     
                     Button(action: { showQNHSheet = true }) {
-                        Label("QNH", systemImage: "gauge.medium")
+                        Label(L10n.loc("qnh"), systemImage: "gauge.medium")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
@@ -55,16 +78,17 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .padding(.top, 8)
-                    
-                    GPSInfoView(location: location)
-                        .padding(.horizontal, 20)
-                }
-                .padding(.vertical, 20)
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 24)
+                .background(Color.black)
             }
         }
         .preferredColorScheme(.dark)
-        .onAppear { barometer.startUpdates() }
+        .onAppear {
+            barometer.startUpdates()
+            location.startUpdates()
+        }
         .onDisappear { barometer.stopUpdates() }
         .sheet(isPresented: $showQNHSheet) {
             QNHEditView(qnhHpa: $barometer.qnhHpa)
@@ -78,25 +102,25 @@ struct QNHEditView: View {
     @State private var text: String = ""
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
                 Section {
-                    TextField("QNH, hPa", text: $text)
+                    TextField(L10n.loc("qnh.placeholder"), text: $text)
                         .keyboardType(.decimalPad)
                 } header: {
-                    Text("Давление на уровне моря (QNH)")
+                    Text(L10n.loc("qnh.pressure_label"))
                 } footer: {
-                    Text("Стандартное значение 1013.25 hPa. От QNH зависит пересчёт давления в высоту.")
+                    Text(L10n.loc("qnh.footer"))
                 }
             }
-            .navigationTitle("QNH")
+            .navigationTitle(L10n.loc("qnh.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") { dismiss() }
+                    Button(L10n.loc("common.cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") {
+                    Button(L10n.loc("common.done")) {
                         if let v = Double(text.replacingOccurrences(of: ",", with: ".")), v > 0, v < 1200 {
                             qnhHpa = v
                         }

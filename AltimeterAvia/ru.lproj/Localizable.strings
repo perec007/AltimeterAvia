@@ -1,0 +1,96 @@
+/* Tabs */
+"tab.altimeter" = "Высотомер";
+"tab.tracks" = "Треки";
+
+/* Main screen */
+"main.altitude" = "Высота";
+"zero_altitude" = "Нулевая высота";
+"qnh" = "QNH";
+
+/* GPS block */
+"gps.title" = "GPS";
+"gps.optional" = "GPS";
+"gps.satellites" = "Спутники";
+"gps.speed" = "Скорость";
+"gps.altitude" = "Высота";
+"gps.accuracy" = "Точность";
+"gps.accuracy_m" = "%.0f м";
+"gps.unavailable" = "GPS недоступен";
+"unit.m_s" = "%.1f м/с";
+"unit.m" = "%.0f м";
+
+/* QNH sheet */
+"qnh.title" = "QNH";
+"qnh.pressure_label" = "Давление на уровне моря (QNH)";
+"qnh.placeholder" = "QNH, hPa";
+"qnh.footer" = "Стандартное значение 1013.25 hPa. От QNH зависит пересчёт давления в высоту.";
+"common.cancel" = "Отмена";
+"common.done" = "Готово";
+
+/* Recording options */
+"record.title" = "Что записывать";
+"record.barometer" = "Барометр";
+"record.gps" = "GPS";
+"record.altitude_baro_zero" = "Высота (барометр, с нулём)";
+"record.altitude_baro_sea" = "Высота над уровнем моря (барометр)";
+"record.vsi" = "VSI (скорость набора/снижения)";
+"record.pressure" = "Давление (барометр)";
+"record.qnh_start" = "QNH (в начале трека)";
+"record.altitude_gps" = "Высота GPS";
+"record.speed_gps" = "Скорость GPS";
+"record.lat_lon" = "Широта / Долгота";
+"record.start" = "Начать запись";
+
+/* Tracks */
+"tracks.recording" = "Идёт запись";
+"tracks.points_count" = "Точек: %d";
+"tracks.start_recording" = "Начать запись";
+"tracks.stop_recording" = "Остановить запись";
+
+/* Track detail */
+"detail.mode" = "Режим";
+"detail.map" = "Карта";
+"detail.3d" = "3D";
+"detail.stats" = "Статистика";
+"detail.no_coords" = "В этом треке нет координат (широта/долгота не записывались).";
+"detail.no_points" = "Нет точек трека";
+"detail.3d_placeholder" = "3D вид доступен без координат (по времени и высоте).";
+
+/* Statistics */
+"stats.time" = "Время";
+"stats.duration" = "Длительность";
+"stats.points" = "Точек";
+"stats.altitude" = "Высота";
+"stats.min_alt" = "Мин. высота";
+"stats.max_alt" = "Макс. высота";
+"stats.total_ascent" = "Набор высоты";
+"stats.total_descent" = "Снижение";
+"stats.vsi" = "Вертикальная скорость";
+"stats.max_climb" = "Макс. набор";
+"stats.max_descent" = "Макс. снижение";
+"stats.distance" = "Расстояние";
+"stats.by_gps" = "По GPS";
+"stats.speed" = "Скорость";
+"stats.avg_speed_gps" = "Средняя (GPS)";
+"stats.unit.m" = "%.0f м";
+"stats.unit.m_s" = "%.1f м/с";
+"stats.duration_sec" = "%d с";
+"stats.duration_min" = "%d мин";
+"stats.duration_hr" = "%d ч %d мин";
+"stats.distance_m" = "%.0f м";
+"stats.distance_km" = "%.2f км";
+
+/* Recorded fields (for track list) */
+"field.alt_zero" = "Высота(0)";
+"field.alt_sea" = "Высота(м)";
+"field.gps_alt" = "GPS высота";
+"field.speed" = "Скорость";
+"field.vsi" = "VSI";
+"field.pressure" = "Давление";
+"field.qnh" = "QNH";
+"field.coords" = "Координаты";
+
+/* Errors */
+"error.barometer" = "Барометр недоступен на этом устройстве.";
+"error.location_denied" = "Доступ к геолокации запрещён";
+"error.location_restricted" = "Геолокация недоступна";

@@ -1,0 +1,3 @@
+/* Permission descriptions */
+"NSMotionUsageDescription" = "Приложению нужен доступ к барометру для отображения высоты и вертикальной скорости.";
+"NSLocationWhenInUseUsageDescription" = "Опционально: для отображения скорости и высоты по GPS.";

@@ -11,12 +11,14 @@ import SwiftUI
 struct AltimeterAviaApp: App {
     @StateObject private var barometer = BarometerManager()
     @StateObject private var location = LocationManager()
+    @StateObject private var trackStore = TrackStore()
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
                 .environmentObject(barometer)
                 .environmentObject(location)
+                .environmentObject(trackStore)
         }
     }
 }

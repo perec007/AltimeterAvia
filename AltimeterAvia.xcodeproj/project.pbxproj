@@ -15,6 +15,18 @@
 		A10000000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* Assets.xcassets */; };
 		A10000000000000000000007 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* LocationManager.swift */; };
 		A10000000000000000000008 /* GPSInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* GPSInfoView.swift */; };
+		A10000000000000000000009 /* TrackStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* TrackStore.swift */; };
+		A1000000000000000000000A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* RootView.swift */; };
+		A1000000000000000000000B /* RecordingOptionsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* RecordingOptionsSheet.swift */; };
+		A1000000000000000000000C /* TracksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* TracksView.swift */; };
+		A1000000000000000000000D /* TrackMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* TrackMapView.swift */; };
+		A1000000000000000000000E /* Track3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* Track3DView.swift */; };
+		A1000000000000000000000F /* TrackDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* TrackDetailView.swift */; };
+		A10000000000000000000010 /* TrackStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* TrackStatsView.swift */; };
+		A10000000000000000000011 /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* L10n.swift */; };
+		A10000000000000000000012 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A40000000000000000000006 /* Localizable.strings */; };
+		A10000000000000000000013 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A40000000000000000000007 /* InfoPlist.strings */; };
+		A10000000000000000000014 /* AltitudeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* AltitudeDisplayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +40,20 @@
 		A20000000000000000000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000008 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		A20000000000000000000009 /* GPSInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GPSInfoView.swift; sourceTree = "<group>"; };
+		A2000000000000000000000A /* TrackStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackStore.swift; sourceTree = "<group>"; };
+		A2000000000000000000000B /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A2000000000000000000000C /* RecordingOptionsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingOptionsSheet.swift; sourceTree = "<group>"; };
+		A2000000000000000000000D /* TracksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TracksView.swift; sourceTree = "<group>"; };
+		A2000000000000000000000E /* TrackMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackMapView.swift; sourceTree = "<group>"; };
+		A2000000000000000000000F /* Track3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track3DView.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* TrackDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackDetailView.swift; sourceTree = "<group>"; };
+		A20000000000000000000011 /* TrackStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackStatsView.swift; sourceTree = "<group>"; };
+		A20000000000000000000012 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A20000000000000000000014 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A20000000000000000000015 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A20000000000000000000016 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A20000000000000000000017 /* AltitudeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltitudeDisplayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +82,11 @@
 				A20000000000000000000002 /* ContentView.swift */,
 				A20000000000000000000003 /* BarometerManager.swift */,
 				A20000000000000000000008 /* LocationManager.swift */,
+				A2000000000000000000000A /* TrackStore.swift */,
+				A2000000000000000000000B /* RootView.swift */,
+				A20000000000000000000012 /* L10n.swift */,
+				A40000000000000000000006 /* Localizable.strings */,
+				A40000000000000000000007 /* InfoPlist.strings */,
 				A40000000000000000000004 /* Views */,
 				A20000000000000000000006 /* Assets.xcassets */,
 				A20000000000000000000007 /* Info.plist */,
@@ -75,8 +106,15 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000004 /* AltimeterGaugeView.swift */,
+				A20000000000000000000017 /* AltitudeDisplayView.swift */,
 				A20000000000000000000005 /* VSIGaugeView.swift */,
 				A20000000000000000000009 /* GPSInfoView.swift */,
+				A2000000000000000000000C /* RecordingOptionsSheet.swift */,
+				A2000000000000000000000D /* TracksView.swift */,
+				A2000000000000000000000E /* TrackMapView.swift */,
+				A2000000000000000000000F /* Track3DView.swift */,
+				A20000000000000000000010 /* TrackDetailView.swift */,
+				A20000000000000000000011 /* TrackStatsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -109,7 +147,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 2620;
 			};
 			buildConfigurationList = A60000000000000000000001 /* Build configuration list for PBXProject "AltimeterAvia" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -136,6 +174,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000006 /* Assets.xcassets in Resources */,
+				A10000000000000000000012 /* Localizable.strings in Resources */,
+				A10000000000000000000013 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,10 +193,41 @@
 				A10000000000000000000005 /* VSIGaugeView.swift in Sources */,
 				A10000000000000000000007 /* LocationManager.swift in Sources */,
 				A10000000000000000000008 /* GPSInfoView.swift in Sources */,
+				A10000000000000000000009 /* TrackStore.swift in Sources */,
+				A1000000000000000000000A /* RootView.swift in Sources */,
+				A1000000000000000000000B /* RecordingOptionsSheet.swift in Sources */,
+				A1000000000000000000000C /* TracksView.swift in Sources */,
+				A1000000000000000000000D /* TrackMapView.swift in Sources */,
+				A1000000000000000000000E /* Track3DView.swift in Sources */,
+				A1000000000000000000000F /* TrackDetailView.swift in Sources */,
+				A10000000000000000000010 /* TrackStatsView.swift in Sources */,
+				A10000000000000000000011 /* L10n.swift in Sources */,
+				A10000000000000000000014 /* AltitudeDisplayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A40000000000000000000006 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A20000000000000000000013 /* en */,
+				A20000000000000000000014 /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000007 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A20000000000000000000015 /* en */,
+				A20000000000000000000016 /* ru */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		A80000000000000000000001 /* Debug */ = {
@@ -164,23 +235,51 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -191,18 +290,46 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -216,6 +343,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = SBQ3W95J2B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AltimeterAvia/Info.plist;
@@ -244,6 +372,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = SBQ3W95J2B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AltimeterAvia/Info.plist;

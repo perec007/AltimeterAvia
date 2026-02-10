@@ -9,84 +9,56 @@ import SwiftUI
 
 struct GPSInfoView: View {
     @ObservedObject var location: LocationManager
-    @State private var isExpanded: Bool = true
-    @State private var gpsEnabled: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
-            } label: {
-                HStack {
-                    Label("GPS (опционально)", systemImage: "location.fill")
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(.white.opacity(0.85))
-                    Spacer()
-                    if gpsEnabled {
-                        Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                            .font(.caption)
-                            .foregroundColor(.white.opacity(0.6))
-                    }
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color.white.opacity(0.08))
+            HStack {
+                Label(L10n.loc("gps.title"), systemImage: "location.fill")
+                    .font(.system(size: 26, weight: .medium))
+                    .foregroundColor(.white.opacity(0.85))
+                Spacer()
             }
-            .buttonStyle(.plain)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.white.opacity(0.08))
             
-            if isExpanded {
-                VStack(alignment: .leading, spacing: 6) {
-                    if !gpsEnabled {
-                        Button {
-                            gpsEnabled = true
-                            location.startUpdates()
-                        } label: {
-                            Text("Включить GPS")
-                                .font(.system(size: 13))
-                                .foregroundColor(.blue)
-                        }
-                        .padding(.vertical, 4)
-                    } else {
-                        Button("Выключить GPS") {
-                            gpsEnabled = false
-                            location.stopUpdates()
-                        }
-                        .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.6))
-                        .padding(.bottom, 2)
-                        
-                        if let msg = location.errorMessage {
-                            Text(msg)
-                                .font(.caption2)
-                                .foregroundColor(.orange)
-                        }
-                        
-                        HStack(spacing: 20) {
-                            gpsRow(title: "Спутники", value: location.satellitesCount.map { "\($0)" } ?? "—")
-                            gpsRow(title: "Скорость", value: location.gpsSpeedMs.map { String(format: "%.1f м/с", $0) } ?? "—")
-                            gpsRow(title: "Высота GPS", value: location.gpsAltitudeM.map { String(format: "%.0f м", $0) } ?? "—")
-                        }
-                        .font(.system(size: 12, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.9))
-                    }
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 24) {
+                    gpsRow(title: L10n.loc("gps.speed"), value: location.gpsSpeedMs.map { L10n.loc("unit.m_s", $0) } ?? "—")
+                    gpsRow(title: L10n.loc("gps.altitude"), value: location.gpsAltitudeM.map { L10n.loc("unit.m", $0) } ?? "—")
+                    gpsRow(title: L10n.loc("gps.accuracy"), value: location.horizontalAccuracyM.map { L10n.loc("gps.accuracy_m", $0) } ?? "—")
                 }
-                .padding(.horizontal, 12)
-                .padding(.bottom, 10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.white.opacity(0.05))
+                .font(.system(size: 24, design: .monospaced))
+                .foregroundColor(.white.opacity(0.9))
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white.opacity(0.05))
         }
-        .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(accuracyColor.opacity(0.85), lineWidth: 3)
+        )
+        .cornerRadius(16)
     }
     
     private func gpsRow(title: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: 10))
+                .font(.system(size: 20))
                 .foregroundColor(.white.opacity(0.6))
             Text(value)
-                .font(.system(size: 13, weight: .medium))
+                .font(.system(size: 26, weight: .medium))
         }
+    }
+    
+    /// Цвет индикации точности: 0–10 м — зелёный, 10–100 м — жёлтый, иначе красный
+    private var accuracyColor: Color {
+        guard let acc = location.horizontalAccuracyM else { return .red }
+        if acc >= 0 && acc <= 10 { return .green }
+        if acc > 10 && acc <= 100 { return .yellow }
+        return .red
     }
 }
 

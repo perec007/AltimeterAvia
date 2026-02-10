@@ -47,18 +47,13 @@ final class BarometerManager: ObservableObject {
         loadSaved()
         isAvailable = CMAltimeter.isRelativeAltitudeAvailable()
         if !isAvailable {
-            errorMessage = "Барометр недоступен на этом устройстве."
+            errorMessage = L10n.loc("error.barometer")
         }
     }
     
     private func loadSaved() {
-        if UserDefaults.standard.object(forKey: Self.qnhKey) != nil {
-            qnhHpa = UserDefaults.standard.double(forKey: Self.qnhKey)
-            if qnhHpa <= 0 { qnhHpa = 1013.25 }
-        }
-        if UserDefaults.standard.object(forKey: Self.zeroKey) != nil {
-            zeroAltitudeOffsetM = UserDefaults.standard.double(forKey: Self.zeroKey)
-        }
+        // При старте приложения: нулевая высота = от уровня моря (offset 0), QNH = стандарт 1013.25 hPa.
+        // Сохранённые в UserDefaults значения не восстанавливаются — каждый запуск со сбросом.
     }
     
     func startUpdates() {
