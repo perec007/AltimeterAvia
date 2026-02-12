@@ -2,12 +2,47 @@
 # Сборка и установка AltimeterAvia на iPhone, подключённый по кабелю.
 # Требуется: Xcode, активный developer directory (xcode-select), доверие устройства к ПК.
 #
-# Выбор устройства: при нескольких телефонах скрипт спросит номер. Без диалога:
-#   DEPLOY_DEVICE=2 ./deploy-to-phone.sh   # установить на 2-й в списке
-#   DEPLOY_UDID=00008140-00116D243EC2801C ./deploy-to-phone.sh   # по UDID
+# Справка: ./deploy-to-phone.sh -h  или  ./deploy-to-phone.sh --help
 
 set -e
 cd "$(dirname "$0")"
+
+show_help() {
+    cat << 'HELP'
+Справка: deploy-to-phone.sh — сборка и установка AltimeterAvia на iPhone/iPad
+
+Использование:
+  ./deploy-to-phone.sh [ -h | --help ]
+  ./deploy-to-phone.sh
+
+Описание:
+  Собирает проект в конфигурации Debug для подключённого по USB устройства,
+  устанавливает .app на устройство (devicectl или ios-deploy).
+
+Требования:
+  • Xcode с выбранным developer directory (xcode-select)
+  • iPhone/iPad подключён по кабелю
+  • На устройстве нажато «Доверять этому компьютеру»
+  • При необходимости: DEVELOPMENT_TEAM для подписи (см. переменные ниже)
+
+Переменные окружения:
+  DEPLOY_DEVICE=N     Выбрать устройство по номеру из списка (1, 2, …), без запроса
+  DEPLOY_UDID=UDID    Указать устройство по UDID, без запроса
+  DEVELOPMENT_TEAM=ID Передать -developmentTeam в xcodebuild (Team ID в Apple Developer)
+
+Примеры:
+  ./deploy-to-phone.sh
+  DEPLOY_DEVICE=2 ./deploy-to-phone.sh
+  DEPLOY_UDID=00008140-00116D243EC2801C ./deploy-to-phone.sh
+  DEVELOPMENT_TEAM=XXXXXXXXXX ./deploy-to-phone.sh
+HELP
+}
+
+for arg in "$@"; do
+    case "$arg" in
+        -h|--help) show_help; exit 0 ;;
+    esac
+done
 
 if ! xcode-select -p 2>/dev/null | grep -q "Xcode.app"; then
     echo "Ошибка: активна не полная Xcode. Выполните:"

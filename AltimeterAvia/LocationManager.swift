@@ -37,6 +37,13 @@ final class LocationManager: NSObject, ObservableObject {
             || manager.authorizationStatus == .restricted
     }
     
+    /// Режим записи трека: при true обновления локации постят уведомление для записи точки в фоне
+    @Published var recordingMode: Bool = false
+    
+    static let recordPointNotification = Notification.Name("LocationManagerRecordPoint")
+    private var lastRecordNotificationTime: Date = .distantPast
+    private let recordNotificationInterval: TimeInterval = 1.0
+    
     /// Включить запрос локации и обновления (опционально вызывается из UI)
     func startUpdates() {
         manager.delegate = self
@@ -46,6 +53,11 @@ final class LocationManager: NSObject, ObservableObject {
         manager.requestWhenInUseAuthorization()
         manager.startUpdatingLocation()
         isAvailable = true
+    }
+    
+    /// Запросить разрешение «всегда» для записи в фоне (вызывать при старте записи трека)
+    func requestAlwaysAuthorizationIfNeeded() {
+        manager.requestAlwaysAuthorization()
     }
     
     private func updateAuthorizationStatus(_ status: CLAuthorizationStatus) {
@@ -95,7 +107,12 @@ extension LocationManager: CLLocationManagerDelegate {
         if loc.horizontalAccuracy >= 0 {
             horizontalAccuracyM = loc.horizontalAccuracy
         }
-        // satellitesCount на iOS не предоставляется — оставляем nil
+        if recordingMode && Date().timeIntervalSince(lastRecordNotificationTime) >= recordNotificationInterval {
+            lastRecordNotificationTime = Date()
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: Self.recordPointNotification, object: nil)
+            }
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

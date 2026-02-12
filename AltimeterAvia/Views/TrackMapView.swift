@@ -10,6 +10,7 @@ import MapKit
 
 struct TrackMapView: View {
     let points: [TrackPointRecord]
+    var selectedIndex: Int? = nil
     
     private var coordinates: [CLLocationCoordinate2D] {
         points.compactMap { p in
@@ -18,14 +19,21 @@ struct TrackMapView: View {
         }
     }
     
+    private var selectedCoordinate: CLLocationCoordinate2D? {
+        guard let idx = selectedIndex, idx >= 0, idx < points.count,
+              let lat = points[idx].latitude, let lon = points[idx].longitude else { return nil }
+        return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    }
+    
     var body: some View {
-        MapTrackViewRepresentable(coordinates: coordinates)
+        MapTrackViewRepresentable(coordinates: coordinates, selectedCoordinate: selectedCoordinate)
             .ignoresSafeArea(edges: .all)
     }
 }
 
 struct MapTrackViewRepresentable: UIViewRepresentable {
     let coordinates: [CLLocationCoordinate2D]
+    var selectedCoordinate: CLLocationCoordinate2D? = nil
     
     func makeUIView(context: Context) -> MKMapView {
         let map = MKMapView()
@@ -42,10 +50,19 @@ struct MapTrackViewRepresentable: UIViewRepresentable {
     
     func updateUIView(_ map: MKMapView, context: Context) {
         map.removeOverlays(map.overlays)
+        map.removeAnnotations(map.annotations)
         if !coordinates.isEmpty {
             let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
             map.addOverlay(polyline)
-            map.setVisibleMapRect(polyline.boundingMapRect, edgePadding: UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50), animated: true)
+            var rect = polyline.boundingMapRect
+            if let sel = selectedCoordinate {
+                let ann = MKPointAnnotation()
+                ann.coordinate = sel
+                map.addAnnotation(ann)
+                let pt = MKMapPoint(sel)
+                rect = rect.union(MKMapRect(x: pt.x - 5000, y: pt.y - 5000, width: 10000, height: 10000))
+            }
+            map.setVisibleMapRect(rect, edgePadding: UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50), animated: context.transaction.animation != nil)
         }
     }
     

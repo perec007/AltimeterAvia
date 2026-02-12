@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct TrackDetailView: View {
     let track: TrackRecord
@@ -13,6 +14,10 @@ struct TrackDetailView: View {
     
     @State private var points: [TrackPointRecord] = []
     @State private var mode: MapOrStats = .map
+    @State private var selectedPointIndex: Int? = nil
+    @State private var showExportSheet = false
+    @State private var exportURL: URL?
+    @State private var exportError: String?
     
     enum MapOrStats: String, CaseIterable {
         case map
@@ -56,26 +61,78 @@ struct TrackDetailView: View {
                         .foregroundColor(.white.opacity(0.6))
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    switch mode {
-                    case .map:
-                        if !pointsWithCoords.isEmpty {
-                            TrackMapView(points: points)
-                        } else {
-                            placeholderView
+                    VStack(spacing: 0) {
+                        Group {
+                            switch mode {
+                            case .map:
+                                if !pointsWithCoords.isEmpty {
+                                    TrackMapView(points: points, selectedIndex: selectedPointIndex)
+                                } else {
+                                    placeholderView
+                                }
+                            case .threeD:
+                                Track3DView(points: points, selectedIndex: selectedPointIndex)
+                            case .stats:
+                                TrackStatsView(stats: trackStats)
+                            }
                         }
-                    case .threeD:
-                        Track3DView(points: points)
-                    case .stats:
-                        TrackStatsView(stats: trackStats)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        
+                        if mode == .map || mode == .threeD {
+                            TrackTimelineView(
+                                points: points,
+                                startDate: track.startDate,
+                                selectedIndex: $selectedPointIndex
+                            )
+                        }
                     }
                 }
             }
         }
         .navigationTitle(TrackDetailView.formatTrackDate(track.startDate))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    exportTrackAsGPX()
+                } label: {
+                    Label(L10n.loc("export.gpx"), systemImage: "square.and.arrow.up")
+                }
+                .disabled(pointsWithCoords.isEmpty)
+            }
+        }
+        .sheet(isPresented: $showExportSheet) {
+            if let url = exportURL {
+                ShareSheet(items: [url])
+            }
+        }
+        .alert(L10n.loc("export.error_title"), isPresented: Binding(
+            get: { exportError != nil },
+            set: { if !$0 { exportError = nil } }
+        )) {
+            Button(L10n.loc("common.done"), role: .cancel) { exportError = nil }
+        } message: {
+            if let msg = exportError { Text(msg) }
+        }
         .preferredColorScheme(.dark)
         .onAppear {
             points = trackStore.points(forTrackId: track.id)
+            if selectedPointIndex == nil && !points.isEmpty {
+                selectedPointIndex = 0
+            }
+        }
+    }
+    
+    private func exportTrackAsGPX() {
+        guard !pointsWithCoords.isEmpty else {
+            exportError = L10n.loc("export.no_coords")
+            return
+        }
+        if let url = TrackGPXExport.writeToTempFile(track: track, points: points) {
+            exportURL = url
+            showExportSheet = true
+        } else {
+            exportError = L10n.loc("export.error_write")
         }
     }
     
@@ -99,4 +156,15 @@ struct TrackDetailView: View {
             Spacer()
         }
     }
+}
+
+// MARK: - Share sheet for GPX export
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

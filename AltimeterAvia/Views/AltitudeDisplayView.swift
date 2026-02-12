@@ -10,10 +10,29 @@ import SwiftUI
 struct AltitudeDisplayView: View {
     let altitudeM: Double
     let qnhHpa: Double
+    /// true = высота от точки старта (нулевая высота), false = высота от QNH (над уровнем моря)
+    let isFromStartPoint: Bool
+    /// Давление, от которого идёт отсчёт: при от QNH — QNH (hPa), при от старта — давление в точке старта (hPa)
+    let referencePressureHpa: Double
+    /// Подпись к давлению: "QNH" или "Старт"
+    let referencePressureLabel: String
+    /// Текущее давление (kPa); если 0 — не показывать
+    let currentPressureKPa: Double
+    /// Превышена заданная максимальная высота (от QNE) — подсветка красным
+    var isOverMaxAltitude: Bool = false
     
-    /// Форматированное значение высоты (целое число); может быть отрицательным относительно нулевой высоты
+    private static let cmThreshold: Double = 5
+    
+    /// Основной текст высоты: при |h| < 5 м — с сантиметрами (X.XX m), иначе целое (X m)
     private var altitudeText: String {
+        if abs(altitudeM) < Self.cmThreshold {
+            return String(format: "%.2f", altitudeM)
+        }
         return String(format: "%.0f", altitudeM)
+    }
+    
+    private var altitudeSourceLabel: String {
+        isFromStartPoint ? L10n.loc("altitude.from_start") : L10n.loc("altitude.from_qnh")
     }
     
     var body: some View {
@@ -35,18 +54,28 @@ struct AltitudeDisplayView: View {
                     .baselineOffset(-8)
             }
             
-            Text("QNH \(String(format: "%.1f", qnhHpa)) hPa")
+            Text(altitudeSourceLabel)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.white.opacity(0.6))
+            
+            Text("\(referencePressureLabel) \(String(format: "%.1f", referencePressureHpa)) hPa")
                 .font(.system(size: 14, weight: .medium, design: .monospaced))
                 .foregroundColor(.white.opacity(0.55))
+            
+            if currentPressureKPa > 0 {
+                Text(L10n.loc("altitude.current_pressure", currentPressureKPa * 10))
+                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.5))
+            }
         }
         .padding(.vertical, 14)
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
-        .background(Color.white.opacity(0.08))
+        .background(isOverMaxAltitude ? Color.red.opacity(0.25) : Color.white.opacity(0.08))
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(Color.white.opacity(0.12), lineWidth: 1)
+                .strokeBorder(isOverMaxAltitude ? Color.red : Color.white.opacity(0.12), lineWidth: isOverMaxAltitude ? 2 : 1)
         )
     }
 }
@@ -54,7 +83,7 @@ struct AltitudeDisplayView: View {
 #Preview {
     ZStack {
         Color.black.ignoresSafeArea()
-        AltitudeDisplayView(altitudeM: 199, qnhHpa: 1013.3)
+        AltitudeDisplayView(altitudeM: 199, qnhHpa: 1013.3, isFromStartPoint: false, referencePressureHpa: 1013.3, referencePressureLabel: "QNH", currentPressureKPa: 98.5, isOverMaxAltitude: false)
     }
     .preferredColorScheme(.dark)
 }

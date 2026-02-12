@@ -1,3 +1,3 @@
 /* Permission descriptions */
-"NSMotionUsageDescription" = "The app needs access to the barometer to display altitude and vertical speed.";
-"NSLocationWhenInUseUsageDescription" = "Optional: to display GPS speed and altitude.";
+"NSMotionUsageDescription" = "Приложению нужен доступ к барометру для отображения высоты и вертикальной скорости.";
+"NSLocationWhenInUseUsageDescription" = "Опционально: для отображения скорости и высоты по GPS.";

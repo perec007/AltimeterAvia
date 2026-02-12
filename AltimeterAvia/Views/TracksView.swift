@@ -6,20 +6,35 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct TracksView: View {
     @EnvironmentObject var barometer: BarometerManager
     @EnvironmentObject var location: LocationManager
     @ObservedObject var trackStore: TrackStore
+    @Environment(\.scenePhase) private var scenePhase
     
-    @State private var showOptionsSheet = false
     @State private var isRecording = false
     @State private var currentTrackId: Int64 = -1
-    @State private var recordingOptions = RecordingOptions()
+    @State private var recordingOptions = TracksView.defaultRecordingOptions
     @State private var recordingTimer: Timer?
     @State private var recordingStartDate = Date()
     @State private var pointsCount = 0
-    @State private var shouldStartAfterSheetDismiss = false
+    @State private var backgroundTaskId: UIBackgroundTaskIdentifier = .invalid
+    
+    /// Фиксированный набор полей: VSI, высота по барометру, от нуля, GPS, широта/долгота
+    private static var defaultRecordingOptions: RecordingOptions {
+        var o = RecordingOptions()
+        o.altitudeBaroDisplay = true
+        o.altitudeBaroSeaLevel = true
+        o.altitudeGps = true
+        o.verticalSpeed = true
+        o.latitudeLongitude = true
+        o.speedGps = false
+        o.pressure = false
+        o.qnh = true
+        return o
+    }
     
     var body: some View {
         ZStack {
@@ -47,17 +62,57 @@ struct TracksView: View {
             }
         }
         .preferredColorScheme(.dark)
-        .sheet(isPresented: $showOptionsSheet) {
-            RecordingOptionsSheet(options: $recordingOptions) {
-                shouldStartAfterSheetDismiss = true
-            }
-            .onDisappear {
-                if shouldStartAfterSheetDismiss {
-                    shouldStartAfterSheetDismiss = false
-                    startRecordingWithOptions()
-                }
+        .onReceive(NotificationCenter.default.publisher(for: LocationManager.recordPointNotification)) { _ in
+            if isRecording {
+                recordOnePoint()
             }
         }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .background && isRecording {
+                startBackgroundRecordingTask()
+            } else if newPhase == .active {
+                endBackgroundRecordingTaskIfNeeded()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Self.backgroundTaskExpiredNotification)) { _ in
+            backgroundTaskId = .invalid
+        }
+    }
+    
+    private static let backgroundTaskExpiredNotification = Notification.Name("TracksViewBackgroundTaskExpired")
+    
+    private func startBackgroundRecordingTask() {
+        guard backgroundTaskId == .invalid else { return }
+        var taskId: UIBackgroundTaskIdentifier = .invalid
+        taskId = UIApplication.shared.beginBackgroundTask(withName: "TrackRecording") {
+            UIApplication.shared.endBackgroundTask(taskId)
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: Self.backgroundTaskExpiredNotification, object: nil)
+            }
+        }
+        backgroundTaskId = taskId
+        if backgroundTaskId != .invalid {
+            scheduleBackgroundRecord()
+        }
+    }
+    
+    private func scheduleBackgroundRecord() {
+        guard isRecording, currentTrackId > 0, backgroundTaskId != .invalid else { return }
+        let remaining = UIApplication.shared.backgroundTimeRemaining
+        if remaining < 5 || remaining == .infinity {
+            endBackgroundRecordingTaskIfNeeded()
+            return
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [self] in
+            recordOnePoint()
+            scheduleBackgroundRecord()
+        }
+    }
+    
+    private func endBackgroundRecordingTaskIfNeeded() {
+        guard backgroundTaskId != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(backgroundTaskId)
+        backgroundTaskId = .invalid
     }
     
     private var recordingHeader: some View {
@@ -122,7 +177,8 @@ struct TracksView: View {
             if isRecording {
                 stopRecording()
             } else {
-                showOptionsSheet = true
+                recordingOptions = Self.defaultRecordingOptions
+                startRecordingWithOptions()
             }
         } label: {
             Text(isRecording ? L10n.loc("tracks.stop_recording") : L10n.loc("tracks.start_recording"))
@@ -135,7 +191,6 @@ struct TracksView: View {
         }
         .buttonStyle(.plain)
         .padding()
-        .disabled(showOptionsSheet)
     }
     
     private func startRecordingWithOptions() {
@@ -147,6 +202,8 @@ struct TracksView: View {
         isRecording = true
         if recordingOptions.altitudeGps || recordingOptions.speedGps || recordingOptions.latitudeLongitude {
             location.startUpdates()
+            location.recordingMode = true
+            location.requestAlwaysAuthorizationIfNeeded()
         }
         barometer.startUpdates()
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
@@ -178,6 +235,8 @@ struct TracksView: View {
     private func stopRecording() {
         recordingTimer?.invalidate()
         recordingTimer = nil
+        endBackgroundRecordingTaskIfNeeded()
+        location.recordingMode = false
         if currentTrackId > 0 {
             trackStore.finishTrack(trackId: currentTrackId)
         }

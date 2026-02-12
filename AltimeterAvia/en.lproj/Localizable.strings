@@ -4,8 +4,16 @@
 
 /* Main screen */
 "main.altitude" = "Height";
+"altitude.from_qnh" = "from QNH";
+"altitude.from_start" = "from start point";
+"altitude.ref_start" = "Start";
+"altitude.cm" = "%d cm";
+"altitude.current_pressure" = "Current pressure %.1f hPa";
 "zero_altitude" = "Zero altitude";
 "qnh" = "QNH";
+"button.start" = "Start";
+"button.start_qnh" = "Start/QNH";
+"button.qnh" = "QNH";
 
 /* GPS block */
 "gps.title" = "GPS";
@@ -26,6 +34,14 @@
 "qnh.footer" = "Standard value 1013.25 hPa. QNH is used to convert pressure to altitude.";
 "common.cancel" = "Cancel";
 "common.done" = "Done";
+
+/* Max altitude (long press on altitude) */
+"max_alt.title" = "Max altitude";
+"max_alt.from_qne_label" = "From QNE (m)";
+"max_alt.from_start_label" = "From start (m)";
+"max_alt.placeholder" = "meters";
+"max_alt.from_start_unavailable" = "Set start point first (long press Start)";
+"max_alt.footer" = "Standard atmosphere QNE 1013.25 hPa. When exceeded, the altitude block turns red.";
 
 /* Recording options */
 "record.title" = "What to record";
@@ -55,6 +71,12 @@
 "detail.no_coords" = "This track has no coordinates (lat/lon were not recorded).";
 "detail.no_points" = "No track points";
 "detail.3d_placeholder" = "3D view is available without coordinates (by time and altitude).";
+
+/* Export (GPX for Insta360 etc.) */
+"export.gpx" = "Export GPX";
+"export.error_title" = "Export failed";
+"export.no_coords" = "This track has no coordinates. Enable lat/lon when recording.";
+"export.error_write" = "Could not create file.";
 
 /* Statistics */
 "stats.time" = "Time";

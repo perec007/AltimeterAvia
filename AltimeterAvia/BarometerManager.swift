@@ -24,6 +24,8 @@ final class BarometerManager: ObservableObject {
     @Published var zeroAltitudeOffsetM: Double = 0 {
         didSet { UserDefaults.standard.set(zeroAltitudeOffsetM, forKey: Self.zeroKey) }
     }
+    /// Давление в точке старта (hPa) в момент установки нулевой высоты; для отображения «от чего идёт отсчёт»
+    @Published private(set) var pressureAtStartPointHpa: Double?
     /// Высота над уровнем моря по барометру (м), до применения zero
     @Published private(set) var altitudeFromBarometerM: Double = 0
     /// Отображаемая высота (м): от моря с учётом «нулевой высоты»
@@ -35,8 +37,28 @@ final class BarometerManager: ObservableObject {
     /// Ошибка (например, нет доступа к Motion)
     @Published private(set) var errorMessage: String?
     
+    /// Высота по давлению при QNE 1013.25 hPa (для сравнения с максимальной)
+    @Published private(set) var altitudeFromQNEM: Double = 0
+    /// Максимальная допустимая высота (от QNE), м; при превышении — подсветка
+    @Published var maxAltitudeQNEM: Double? = nil {
+        didSet {
+            if let v = maxAltitudeQNEM {
+                UserDefaults.standard.set(v, forKey: Self.maxAltitudeQNEKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Self.maxAltitudeQNEKey)
+            }
+        }
+    }
+    /// Текущая высота превысила заданный максимум (от QNE)
+    var isOverMaxAltitude: Bool {
+        guard let maxM = maxAltitudeQNEM else { return false }
+        return altitudeFromQNEM > maxM
+    }
+    
     private static let qnhKey = "altimeter_avia_qnh_hpa"
     private static let zeroKey = "altimeter_avia_zero_offset_m"
+    private static let startPressureKey = "altimeter_avia_start_pressure_hpa"
+    private static let maxAltitudeQNEKey = "altimeter_avia_max_altitude_qne_m"
     
     /// История высот для расчёта VSI (последние N точек по времени)
     private var altitudeHistory: [(date: Date, altitude: Double)] = []
@@ -51,9 +73,20 @@ final class BarometerManager: ObservableObject {
         }
     }
     
+    private static let qneHpa: Double = 1013.25
+    
     private func loadSaved() {
-        // При старте приложения: нулевая высота = от уровня моря (offset 0), QNH = стандарт 1013.25 hPa.
-        // Сохранённые в UserDefaults значения не восстанавливаются — каждый запуск со сбросом.
+        if UserDefaults.standard.object(forKey: Self.zeroKey) != nil {
+            zeroAltitudeOffsetM = UserDefaults.standard.double(forKey: Self.zeroKey)
+        }
+        if UserDefaults.standard.object(forKey: Self.startPressureKey) != nil {
+            let p = UserDefaults.standard.double(forKey: Self.startPressureKey)
+            pressureAtStartPointHpa = p > 0 ? p : nil
+        }
+        if UserDefaults.standard.object(forKey: Self.maxAltitudeQNEKey) != nil {
+            maxAltitudeQNEM = UserDefaults.standard.double(forKey: Self.maxAltitudeQNEKey)
+            if maxAltitudeQNEM == 0 { maxAltitudeQNEM = nil }
+        }
     }
     
     func startUpdates() {
@@ -74,6 +107,7 @@ final class BarometerManager: ObservableObject {
             let altM = Self.pressureToAltitudeM(pressureKPa: pKPa, qnhHpa: self.qnhHpa)
             self.altitudeFromBarometerM = altM
             self.altitudeDisplayM = altM - self.zeroAltitudeOffsetM
+            self.altitudeFromQNEM = Self.pressureToAltitudeM(pressureKPa: pKPa, qnhHpa: Self.qneHpa)
             self.updateVSI(altitude: self.altitudeFromBarometerM)
         }
     }
@@ -82,9 +116,16 @@ final class BarometerManager: ObservableObject {
         altimeter.stopRelativeAltitudeUpdates()
     }
     
-    /// Установить текущую высоту как «нулевую» (от неё идёт отсчёт)
+    /// Установить текущую высоту как «нулевую» (от неё идёт отсчёт). Сохраняется в память для следующего запуска.
     func setZeroAltitude() {
         zeroAltitudeOffsetM = altitudeFromBarometerM
+        let pHpa = pressureKPa > 0 ? pressureKPa * 10 : nil
+        pressureAtStartPointHpa = pHpa
+        if let p = pHpa {
+            UserDefaults.standard.set(p, forKey: Self.startPressureKey)
+        } else {
+            UserDefaults.standard.removeObject(forKey: Self.startPressureKey)
+        }
     }
     
     /// Перевод давления в высоту над уровнем моря (барометрическая формула).
@@ -93,6 +134,43 @@ final class BarometerManager: ObservableObject {
         guard pressureKPa > 0, qnhHpa > 0 else { return 0 }
         let p0KPa = qnhHpa / 10.0
         return 44330.77 * (1.0 - pow(pressureKPa / p0KPa, 0.19026))
+    }
+    
+    /// Обратная формула: высота (м) → давление (kPa) при заданном QNH.
+    static func altitudeToPressureKPa(altitudeM: Double, qnhHpa: Double) -> Double {
+        guard qnhHpa > 0 else { return 0 }
+        let p0KPa = qnhHpa / 10.0
+        let ratio = 1.0 - altitudeM / 44330.77
+        guard ratio > 0 else { return 0 }
+        return p0KPa * pow(ratio, 5.255)
+    }
+    
+    /// Задать максимальную высоту напрямую от QNE (м).
+    func setMaxAltitudeFromQNE(_ meters: Double) {
+        maxAltitudeQNEM = meters > 0 ? meters : nil
+    }
+    
+    /// Задать максимальную высоту от точки старта (м); пересчитывается в QNE и сохраняется.
+    func setMaxAltitudeFromStart(_ metersAboveStart: Double) {
+        guard let pStartHpa = pressureAtStartPointHpa, pStartHpa > 0 else {
+            setMaxAltitudeFromQNE(metersAboveStart)
+            return
+        }
+        let altStartFromQNH = Self.pressureToAltitudeM(pressureKPa: pStartHpa / 10.0, qnhHpa: qnhHpa)
+        let altMaxFromQNH = altStartFromQNH + metersAboveStart
+        let pressureAtMaxKPa = Self.altitudeToPressureKPa(altitudeM: altMaxFromQNH, qnhHpa: qnhHpa)
+        let qneM = Self.pressureToAltitudeM(pressureKPa: pressureAtMaxKPa, qnhHpa: Self.qneHpa)
+        maxAltitudeQNEM = qneM > 0 ? qneM : nil
+    }
+    
+    /// Текущий максимум в «метрах от старта» (для отображения в окне ввода), если задан старт и есть max QNE.
+    func currentMaxAltitudeFromStartM() -> Double? {
+        guard let pStartHpa = pressureAtStartPointHpa, pStartHpa > 0,
+              let maxQNE = maxAltitudeQNEM else { return nil }
+        let altStartFromQNH = Self.pressureToAltitudeM(pressureKPa: pStartHpa / 10.0, qnhHpa: qnhHpa)
+        let pressureAtMaxKPa = Self.altitudeToPressureKPa(altitudeM: maxQNE, qnhHpa: Self.qneHpa)
+        let altMaxFromQNH = Self.pressureToAltitudeM(pressureKPa: pressureAtMaxKPa, qnhHpa: qnhHpa)
+        return altMaxFromQNH - altStartFromQNH
     }
     
     private func updateVSI(altitude: Double) {
